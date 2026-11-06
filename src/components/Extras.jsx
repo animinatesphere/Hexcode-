@@ -14,6 +14,17 @@ const pad = (n) => String(n).padStart(2, '0')
 export function MaskZoom({ word = 'CASE FILES', hue = 200, eyebrow, line }) {
   const root = useRef(null)
   const id = useId().replace(/:/g, '')
+  // on tall phone screens, stack the word on two lines in a portrait frame so it isn't cropped
+  const [portrait] = useState(() => window.matchMedia('(max-aspect-ratio: 1/1)').matches)
+  const [vw, vh] = portrait ? [900, 1600] : [1600, 900]
+  const lines = portrait ? word.split(' ') : [word]
+  const fs = portrait ? 300 : 330, lh = fs * 0.95
+  const y0 = vh / 2 - ((lines.length - 1) * lh) / 2 + fs * 0.35
+  const Word = (props) => (
+    <text x={vw / 2} y={y0} textAnchor="middle" fontFamily="Anton, Impact, sans-serif" fontSize={fs} {...props}>
+      {lines.map((l, i) => <tspan key={i} x={vw / 2} dy={i ? lh : 0}>{l}</tspan>)}
+    </text>
+  )
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: '+=170%', scrub: 1, pin: true } })
@@ -28,15 +39,15 @@ export function MaskZoom({ word = 'CASE FILES', hue = 200, eyebrow, line }) {
   return (
     <section ref={root} className="maskzoom">
       <div className="mz-scene"><CityScene hue={hue} /></div>
-      <svg className="mz-mask" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <svg className="mz-mask" viewBox={`0 0 ${vw} ${vh}`} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <mask id={id}>
-            <rect width="1600" height="900" fill="white" />
-            <text x="800" y="560" textAnchor="middle" fontFamily="Anton, Impact, sans-serif" fontSize="330" fill="black">{word}</text>
+            <rect width={vw} height={vh} fill="white" />
+            <Word fill="black" />
           </mask>
         </defs>
-        <rect width="1600" height="900" fill="#07060b" mask={`url(#${id})`} />
-        <text x="800" y="560" textAnchor="middle" fontFamily="Anton, Impact, sans-serif" fontSize="330" fill="none" stroke="#ff2e63" strokeWidth="2">{word}</text>
+        <rect width={vw} height={vh} fill="#07060b" mask={`url(#${id})`} />
+        <Word fill="none" stroke="#ff2e63" strokeWidth="2" />
       </svg>
       <p className="mz-hint mono">KEEP SCROLLING TO ENTER ↓</p>
       <div className="mz-copy">

@@ -268,7 +268,8 @@ a { color: inherit; text-decoration: none; cursor: none; }
 @keyframes pop { 0% { scale: 1; rotate: 0deg; } 40% { scale: 1.5; rotate: -15deg; } 100% { scale: 1; rotate: 0deg; } }
 
 /* skills: idle float on chips + blob */
-.chip { animation: bob 3.2s ease-in-out infinite alternate; }
+.chip { animation: chipbob 3.2s ease-in-out infinite alternate; }
+@keyframes chipbob { from { translate: 0 -3px; } to { translate: 0 3px; } }
 .chip:nth-child(3n) { animation-duration: 2.6s; animation-delay: -1s; }
 .chip:nth-child(3n+1) { animation-duration: 3.8s; animation-delay: -2s; }
 .chip { translate: 0 0; }
@@ -731,3 +732,32 @@ a { color: inherit; text-decoration: none; cursor: none; }
 @keyframes gridrun2 { to { background-position: 0 60px, 0 0; } }
 body { background: var(--bg); }
 @media (prefers-reduced-motion: reduce) { .aurora i, .backdrop-grid { animation: none; } }
+
+/* ================= MOBILE FIXES ================= */
+html, body { max-width: 100%; overflow-x: hidden; }
+@supports (overflow: clip) { html, body { overflow-x: clip; } }
+.loader-logo { font-size: clamp(3.5rem, 18vw, 8rem); }
+
+@media (max-width: 760px) {
+  /* hero: fewer, softer shapes so the name stays readable */
+  .hero .shape:nth-child(5), .hero .shape:nth-child(n+7) { display: none; }
+  .hero .shape { scale: .7; }
+  .hero .shape svg { opacity: .5; filter: none; }
+  .shapes .shape svg { opacity: .45; }
+  .hud { top: 5.5rem; font-size: .7rem; }
+  .hero-sub { gap: 1rem 2rem; }
+  /* photo mode: posters flow evenly in two columns */
+  .pm-col { display: contents; }
+  .pm-grid { gap: .8rem; margin-top: 6vh; }
+  .poster figcaption { padding: .9rem; }
+  .pm-hud { justify-content: flex-start; gap: 1rem; font-size: .65rem; }
+  /* device showcase: callouts closer to the devices */
+  .cs-callout.k0 { left: 6%; top: 22%; } .cs-callout.k1 { right: 6%; top: 30%; }
+  /* section spacing */
+  .section { padding: 12vh 6vw; }
+  .shutter { height: 40vh; }
+  .phone { width: min(270px, 78vw); }
+  .contact-links { gap: 1.2rem 2rem; }
+}
+.hud-left { white-space: nowrap; }
+@media (max-width: 760px) { .hero-title { font-size: 27vw; } .hero-content { bottom: 10vh; } }
